@@ -9,14 +9,14 @@ fn main() {
     let contents = fs::read_to_string(filename)
         .expect("Something went wrong reading the file");
     
-    let numbers = find_sums_to_2020(contents.lines()
+    let numbers = find_three_sums_to_2020(contents.lines()
         .map(|s| s.parse::<i32>().unwrap())
         .collect());
     
-    println!("Your numbers are {} and {}, multiplied makes {}", numbers.0, numbers.1, numbers.0*numbers.1);
+    println!("Your numbers are {}, {}, and {}, multiplied makes {}", numbers.0, numbers.1, numbers.2, numbers.0*numbers.1*numbers.2);
 }
 
-fn find_sums_to_2020(input: Vec<i32>) -> (i32, i32) {
+fn find_two_sums_to_2020(input: Vec<i32>) -> (i32, i32) {
     for (i, num1) in input.iter().enumerate() {
         for (j, num2) in input.iter().enumerate() {
             if ((i != j) && (num1 + num2 == 2020)) {
@@ -25,6 +25,20 @@ fn find_sums_to_2020(input: Vec<i32>) -> (i32, i32) {
         }
     }
     (0,0)
+}
+
+fn find_three_sums_to_2020(input: Vec<i32>) -> (i32, i32, i32) {
+    for (i, num1) in input.iter().enumerate() {
+        for (j, num2) in input.iter().enumerate() {
+            for (k, num3) in input.iter().enumerate() {
+                if (i != j && i != k && j != k
+                    && num1 + num2 + num3 == 2020) {
+                    return (num1.clone(), num2.clone(), num3.clone())
+                }
+            }
+        }
+    }
+    (0,0,0)
 }
 
 #[cfg(test)]
@@ -45,7 +59,7 @@ mod tests {
             .map(|s| s.parse::<i32>().unwrap())
             .collect();
 
-        assert_eq!(expected, find_sums_to_2020(input));
+        assert_eq!(expected, find_two_sums_to_2020(input));
     }
 
     #[test]
@@ -62,6 +76,23 @@ mod tests {
             .map(|s| s.parse::<i32>().unwrap())
             .collect();
 
-        assert_eq!(expected, find_sums_to_2020(input));
+        assert_eq!(expected, find_two_sums_to_2020(input));
+    }
+
+    #[test]
+    fn test_find_three_sums_to_2020_1721_299() {
+        let expected = (979, 366, 675);
+        let raw_input = "\
+1721
+979
+366
+299
+675
+1456";
+        let mut input: Vec<i32> = raw_input.split("\n")
+            .map(|s| s.parse::<i32>().unwrap())
+            .collect();
+
+        assert_eq!(expected, find_three_sums_to_2020(input));
     }
 }
